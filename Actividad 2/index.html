@@ -15,3 +15,15 @@
     <button onclick="app.desplegarPorcentajesPorParcial()">Porcentajes </button>
 
 <div id="contenido"></div>
+
+<script src="app.js" defer></script>
+<!-- //Instanciar la clase InicioPAM para poder modificar el DOM. Porque el método está
+declarado dentro de la clase en un ambito local. Para utilizarlo
+en el ambito global, tendriamos que declarar la funcion Fuera de la clase. -->
+    <script> 
+     /*    //Instancia */
+        const app = new InicioPAM();
+    </script>
+
+</body>
+</html>
