@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interfaz Gráfica PAM</title>
+    <link rel="stylesheet" href="style.css">
+     
+</head>
+<body>
+    <button onclick="app.desplegarReglamentoPAM()">Reglamento</button>
+    <button onclick="app.desplegarLineamientosClassroom()">Liniamientos</button>
+    <button onclick="app.desplegarFechasDeParciales()">Fechas Parciales</button>
+    <button onclick="app.desplegarPorcentajesPorParcial()">Porcentajes </button>
+
+    <div id="contenido"></div>
+  
+    <script src="app.js" defer></script>
+<!-- //Instanciar la clase InicioPAM para poder modificar el DOM. Porque el método está
+declarado dentro de la clase en un ambito local. Para utilizarlo
+en el ambito global, tendriamos que declarar la funcion Fuera de la clase. -->
+    <script> 
+     /*    //Instancia */
+        const app = new InicioPAM();
+    </script>
+
+</body>
+</html>
