@@ -1,8 +1,7 @@
 
-function saludar(){
-    function saludar(name){
+function saludar(name){
     console.log(name)
-    console.log('hola mundo');
+    console.log('holaa');
+    console.log('holaa' + name );
 }
-saludar (daniel)
-}
+saludar (DANIEL);
