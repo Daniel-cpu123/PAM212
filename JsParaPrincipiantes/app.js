@@ -1,6 +1,5 @@
 
-let numberone= 60
-let numertwo = 100
-
-let res = numberone< numertwo
+let passwordDB = 'pepe123'
+let input =  'gfdgfnnfnfnff'
+let res = input == passwordDB
 console.log(res)
