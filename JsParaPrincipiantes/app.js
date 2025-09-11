@@ -1,9 +1,12 @@
 
-let score = 70
-if (score > 30){
-    console.log('ocupas practicas más')
-} else if (score > 15){
-    console.log('estás mejorando')
-} else {
-    console.log('ocupas seguir un tutorial ')
-}
+let typecard = 'debitcard'
+switch (typecard){
+    case 'debit Card':
+        console.log('estos es una debit card');
+        break;
+        case 'credit card':
+              console.log('estos es una credit card');
+        break;
+        default:
+              console.log('No tienes tarjeta ');
+      }
