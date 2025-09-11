@@ -1,2 +1,7 @@
+var nameuser = 'jonh'
+let lastname = 'carter'
+console.log(lastname)
 
-console.log("esto es un string")
+
+nombredelusaurio = 'jonh'
+console.log(nombredelusaurio)
