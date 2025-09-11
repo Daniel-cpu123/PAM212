@@ -1,7 +1,7 @@
 
-function saludar(name){
-    console.log(name)
-    console.log('holaa');
-    console.log('holaa' + name );
+function add (n1,n2){
+    console.log(n1+n2)
+
 }
-saludar (DANIEL);
+add (3,2)
+add(100,2)
