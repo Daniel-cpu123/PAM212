@@ -9,5 +9,6 @@ const productos = [
 const mayoresDe1000 = productos.filter(producto => producto.precio > 1000);
 
 
-const nombres = productos.map(producto => producto.nombre);
+const nombres = mayoresDe1000.map(producto => producto.nombre);
 console.log(nombres);
+
