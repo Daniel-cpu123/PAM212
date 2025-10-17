@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Text, StyleSheet, View } from 'react-native'
 import ContadorScreen from './ContadorScreen';
-import BotonesScreen from './BotonesScreen';
+import BotonesScreen from './Botones/BotonesScreen';
 import TextInputScreen from './TextInputScreen';
 import ImageBackgroundScreen from './ImageBackgroundScreen';
 import ScrollViewScreen from './ScrollViewScreen';
@@ -51,7 +51,7 @@ export default function MenuScreen() {
       </View>
       </View>
     )
-
+ 
     }
 
     
@@ -60,7 +60,7 @@ export default function MenuScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#4f5f99ff',
+    backgroundColor: '#44517fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
