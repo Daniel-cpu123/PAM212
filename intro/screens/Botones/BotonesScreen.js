@@ -1,126 +1,120 @@
-import { Text, StyleSheet, View } from 'react-native'
-import SwitchButton from './Switch'
-// Importamos nuestro componente SwitchButton para usarlo en cada opción de configuración
+import React from 'react';
+import {
+  Text,
+  StyleSheet,
+  View,
+  Button,
+  TouchableOpacity,
+  TouchableHighlight,
+  TouchableWithoutFeedback,
+  Pressable,
+  ScrollView,
+} from 'react-native';
 
 export default function BotonesScreen() {
-  // Array de información de configuración
-  // Cada objeto tiene:
-  // id -> identificador único
-  // title -> texto que se mostrará
-  // value -> valor inicial del switch (true = ON, false = OFF)
-  const info = [
-    {
-      id: 1,
-      title: 'Mantener la pantalla encendida',
-      value: false
-    },
-    {
-      id: 2,
-      title: 'Ajustar brillo automático',
-      value: true
-    },
-    {
-      id: 3,
-      title: 'WiFi',
-      value: false
-    },
-    {
-      id: 4,
-      title: 'Bluetooth',
-      value: false
-    }
-  ]
-
-  // Componente que representa cada item de configuración
-  // Recibe props: title y value
-  const Item = ({ title, value }) => {
-    return (
-      <View style={styles.item}>
-        {/* Caja del título */}
-        <View style={styles.itemBox}>
-          <Text style={styles.itemtitle}>{title}</Text>
-        </View>
-        {/* Caja del switch */}
-        <View style={styles.switch}>
-          <SwitchButton temporal={value} isButton={true} />
-          {/* temporal = valor inicial del switch
-              isButton = true para que sea interactivo */}
-        </View>
-      </View>
-    )
-  }
-
   return (
-    <View style={styles.container}>
-      {/* Encabezado de la pantalla */}
-      <View style={styles.Encabezado}>
-        <Text style={styles.EncabezadoTitle}> Configuración </Text>
-      </View>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.header}>Tipos de Botones en React Native</Text>
 
-      {/* Contenedor principal de los items */}
-      <View style={styles.footer}>
-        {
-          // Recorremos el array info y renderizamos un Item por cada objeto
-          info.map(x =>
-            <Item key={x.id} title={x.title} value={x.value} />
-          )
-        }
-        {/* Texto adicional, podría ser un footer o nota */}
-        <Text> Configuración </Text>
-      </View>
-    </View>
-  )
+      {/* 1. Button nativo */}
+      <Text style={styles.title}>1. Button (nativo)</Text>
+      <Button title="Presionar" onPress={() => alert("Botón básico")} />
+
+      {/* 2. TouchableOpacity */}
+      <Text style={styles.title}>2. TouchableOpacity</Text>
+      <TouchableOpacity style={styles.btnOpacity} onPress={() => alert("Opacity")}>
+        <Text style={styles.text}>Botón Opacity</Text>
+      </TouchableOpacity>
+
+      {/* 3. TouchableHighlight */}
+      <Text style={styles.title}>3. TouchableHighlight</Text>
+      <TouchableHighlight
+        style={styles.btnHighlight}
+        underlayColor="#002a3dff"
+        onPress={() => alert("Highlight")}
+      >
+        <Text style={styles.text}>Botón Highlight</Text>
+      </TouchableHighlight>
+
+      {/* 4. TouchableWithoutFeedback */}
+      <Text style={styles.title}>4. TouchableWithoutFeedback</Text>
+      <TouchableWithoutFeedback onPress={() => alert("Sin feedback")}>
+        <View style={styles.btnNoFeedback}>
+          <Text style={styles.text}>Sin feedback</Text>
+        </View>
+      </TouchableWithoutFeedback>
+
+      {/* 5. Pressable */}
+      <Text style={styles.title}>5. Pressable</Text>
+      <Pressable
+        onPress={() => alert("Pressable!")}
+        style={({ pressed }) => [
+          styles.btnPressable,
+        {     
+            backgroundColor: pressed ? "#ff7043" : "#66bb6a", // cambia el color de fondo al presionar
+            transform: pressed ? [{ scale: 0.95 }] : [{ scale: 1 }], // se hace un poquito más pequeño al presionar
+            opacity: pressed ? 0.7 : 1, // disminuye la opacidad mientras se presiona
+            shadowColor: "#000", // color de la sombra
+            shadowOffset: { width: 0, height: pressed ? 1 : 4 }, // desplaza la sombra verticalmente
+            shadowOpacity: pressed ? 0.3 : 0.6, // cambia la opacidad de la sombra
+            shadowRadius: pressed ? 2 : 4, // cambia el difuminado de la sombra
+        },
+        ]}
+      > 
+        <Text style={styles.text}>Botón Pressable</Text>
+      </Pressable>
+    </ScrollView>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,                 // ocupa toda la pantalla
-    justifyContent: 'center',
-    alignContent: 'center'
+    backgroundColor: "#ffffffff", // Color de fondo de toda la pantalla
+    alignItems: "center",        // Centra horizontalmente los elementos dentro del container
+    justifyContent: "flex-start",// Alinea verticalmente los elementos desde arriba
+    padding: 20,                 // Espacio interno alrededor del contenido
+    paddingTop: 50,              // Espacio extra en la parte superior
   },
-  Encabezado: {
-    height: 75,              // altura del encabezado
-    alignSelf: 'stretch',    // ocupa todo el ancho
-    flexDirection: 'row',    // los elementos dentro se organizan horizontalmente
-    justifyContent: 'flex-start', // alineamos al inicio
-    alignContent: 'center',
-    paddingHorizontal: 18    // espacio lateral
+  header: {
+    fontSize: 22,                // Tamaño de letra del encabezado
+    fontWeight: "bold",          // Pone el texto en negrita
+    marginBottom: 20,            // Espacio debajo del encabezado
+    color: "#333",               // Color del texto
+    textAlign: "center",         // Centra el texto horizontalmente
   },
-  EncabezadoTitle: {
-    fontSize: 19,
-    fontWeight: 'bold',
-    color: '#383838',
-    marginLeft: 10
+  title: {
+    fontWeight: "bold",          // Título de cada sección en negrita
+    marginTop: 20,               // Espacio arriba del título
+    marginBottom: 5,             // Espacio debajo del título
+    color: "#333",               // Color del texto
   },
-  footer: {
-    flex: 1,                 // ocupa el resto del espacio
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    alignSelf: 'stretch',
-    marginHorizontal: 20
+  text: {
+    color: "white",              // Color del texto dentro de los botones
+    fontWeight: "600",           // Grosor del texto para que resalte
   },
-  item: {
-    height: 55,              // altura de cada item
-    alignSelf: 'stretch',
-    flexDirection: 'center',    // organizamos título y switch horizontalmente
-    justifyContent: 'center',
-    alignItems: 'center'
+  btnOpacity: {
+    backgroundColor: "#2a9fffff",// Color de fondo del botón TouchableOpacity
+    padding: 10,                 // Espacio interno del botón
+    borderRadius: 8,             // Bordes redondeados del botón
   },
-  itemBox: {
-    height: 100,             // altura interna
-    flex: 1,                 // ocupa todo el espacio horizontal disponible
-    justifyContent: 'center',
-    alignItems: 'flex-start' // texto alineado a la izquierda
+  btnHighlight: {
+    backgroundColor: "#29b6f6",  // Color de fondo del botón TouchableHighlight
+    padding: 10,                 // Espacio interno del botón
+    borderRadius: 8,             // Bordes redondeados
   },
-  itemtitle: {
-    fontSize: 15,
-    fontWeight: '300',
-    color: '#383838'
+  btnNoFeedback: {
+    backgroundColor: "#ab47bc",  // Color de fondo del botón sin feedback visual
+    padding: 10,                 // Espacio interno del botón
+    borderRadius: 8,             // Bordes redondeados
   },
-  switch: {
-    width: 70,               // ancho del contenedor del switch
-    height: '100%',          // ocupa toda la altura del item
-    justifyContent: 'center',
-    alignItems: 'center'
-  }
-})
+  btnPressable: {
+    padding: 10,                 // Espacio interno del botón Pressable
+    borderRadius: 8,             // Bordes redondeados
+    // Los demás estilos dinámicos (color, opacidad, sombra, escala) se agregan dentro de style={({ pressed }) => ...}
+  },
+  btnNative: {
+    padding: 10,                 // Espacio interno del botón nativo o simulación de Ripple
+    borderRadius: 8,             // Bordes redondeados
+    marginBottom: 15,            // Espacio debajo del botón para separarlo del siguiente
+  },
+});
