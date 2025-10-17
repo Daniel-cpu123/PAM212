@@ -118,3 +118,5 @@ const styles = StyleSheet.create({
     marginBottom: 15,            // Espacio debajo del botón para separarlo del siguiente
   },
 });
+
+/*Buttons y Switch Completada*/
