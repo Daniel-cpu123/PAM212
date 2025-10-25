@@ -9,6 +9,7 @@ import ActivityIndicatorScreen from './ActivityIndicatorScreen';
 import FlatListScreen from './FlatListScreen';
 import ModalScreen from './ModalScreen';
 import BottomSheetScreen from './BottomSheetScreen';
+import RepasoScreen from './RepasoScreen';
 import { Button } from 'react-native-web';
 
 export default function MenuScreen() {
@@ -19,6 +20,8 @@ export default function MenuScreen() {
             return <ContadorScreen />;
         case 'botones':
             return <BotonesScreen />;
+        case 'repaso':
+            return <RepasoScreen />;
         case 'TextInput':
             return <TextInputScreen />;
         case 'ImageBackground':
@@ -48,6 +51,7 @@ export default function MenuScreen() {
             <Button onPress={()=>setScreen('FlatList')} title="Pract:FlatList"/>
             <Button onPress={()=>setScreen('Modal')} title="Pract:Modal"/>
             <Button onPress={()=>setScreen('Bottom Sheet')} title="Pract:Bottom Sheet"/>
+            <Button onPress={()=>setScreen('repaso')} title="Pract:Repaso"/>
       </View>
       </View>
     )
