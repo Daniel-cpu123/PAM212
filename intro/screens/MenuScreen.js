@@ -5,10 +5,12 @@ import BotonesScreen from './Botones/BotonesScreen';
 import TextInputScreen from './TextInputScreen';
 import ImageBackgroundScreen from './ImageBackgroundScreen';
 import ScrollViewScreen from './ScrollViewScreen';
+import ScrollViewScreen2 from './ScrollViewScreen2';
 import ActivityIndicatorScreen from './ActivityIndicatorScreen';
 import FlatListScreen from './FlatListScreen';
 import ModalScreen from './ModalScreen';
 import BottomSheetScreen from './BottomSheetScreen';
+import Repaso from './Repaso';
 import { Button } from 'react-native-web';
 
 export default function MenuScreen() {
@@ -17,6 +19,8 @@ export default function MenuScreen() {
     switch (screen) {
         case 'contador':
             return <ContadorScreen />;
+        case 'Repaso1':
+            return <Repaso/>;
         case 'botones':
             return <BotonesScreen />;
         case 'TextInput':
@@ -25,6 +29,8 @@ export default function MenuScreen() {
             return <ImageBackgroundScreen />;
         case 'ScrollView':
             return <ScrollViewScreen />;
+        case 'ScrollView2':
+            return <ScrollViewScreen2 />;
         case 'ActivityIndicator':
             return <ActivityIndicatorScreen />;
         case 'FlatList':
@@ -44,10 +50,12 @@ export default function MenuScreen() {
             <Button onPress={()=>setScreen('TextInput')} title="Pract:TextInput"/>
             <Button onPress={()=>setScreen('ImageBackground')} title="Pract:ImageBackground"/>
             <Button onPress={()=>setScreen('ScrollView')} title="Pract:ScrollView"/>
+            <Button onPress={()=>setScreen('ScrollView2')} title="Pract:ScrollView2"/>
             <Button onPress={()=>setScreen('ActivityIndicator')} title="Pract:ActivityIndicator"/>
             <Button onPress={()=>setScreen('FlatList')} title="Pract:FlatList"/>
             <Button onPress={()=>setScreen('Modal')} title="Pract:Modal"/>
             <Button onPress={()=>setScreen('Bottom Sheet')} title="Pract:Bottom Sheet"/>
+            <Button onPress={()=>setScreen('Repaso')} title="Repaso"/>
       </View>
       </View>
     )
