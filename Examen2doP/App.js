@@ -11,12 +11,12 @@ import {
 } from "react-native-web";
 
 const DATA = [
-  {id:1},
-  {id:2},
-  {id:3},
-  {id:4},
-  {id:5},
-  {id:5},
+  {id: 1, title: 'Primera noticia'},
+  {id: 2, title: 'Segunda noticia'},
+  {id: 3, title: 'Tercera noticia'},
+  {id: 4, title: 'Cuarta noticia'},
+  {id: 5, title: 'Quinta noticia'},
+  {id: 6, title: 'Sexta noticia'},
 ];
 
 const SimpleHeader = () => {
@@ -34,6 +34,7 @@ const SimpleScrollView = () => {
     <ScrollView
      showVerticalScrollIndicator={false}
     >
+    
       {DATA.map((item) => {
         return (
           <View style={styles.card} key = {item.id}>
@@ -41,7 +42,16 @@ const SimpleScrollView = () => {
           </View>
         );
       })}
-      
+
+      <View style={styles.card} key={item.id}>
+        <Text style={styles.subtitle}> Sheinbaum seguirá caminando en la calle con la gente pese a acoso: "No vamos a cambiar" </Text>
+      </View>
+      <View style={styles.card} key={item.id}>
+        <Text style={styles.subtitle}> Descubrimiento arqueológico revela secretos de civilizaciones antiguas </Text>
+      </View>
+      <View style={styles.card} key={item.id}>
+        <Text style={styles.subtitle}> Nuevas evidencias sobre la vida en la antigua Roma </Text>
+      </View>
     </ScrollView>
     </View>
   );
