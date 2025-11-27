@@ -22,13 +22,11 @@ export default function UsuarioView() {
     const [loading, setLoading] = useState(true);
     const [guardando, setGuardando] = useState(false);
 
-    // Select - cargar usuarios desde la BD
     const cargarUsuarios = useCallback(async () => {
         try {
             setLoading(true);
             const data = await controller.obtenerUsuarios();
             setUsuarios(data);
-            console.log(`${data.length} usuarios cargados`);
         } catch (error) {
             Alert.alert('Error', error.message);
         } finally {
@@ -36,9 +34,7 @@ export default function UsuarioView() {
         }
     }, []);
 
-    //  Inicializar controlador y cargar datos
     useEffect(() => {
-
         const init = async () => {
             await controller.initialize();
             await cargarUsuarios();
@@ -46,27 +42,18 @@ export default function UsuarioView() {
 
         init();
 
-        // Avisar los cambios automaticos
         controller.addListener(cargarUsuarios);
-
-        return () => {
-            controller.removeListener(cargarUsuarios);
-        };
+        return () => controller.removeListener(cargarUsuarios);
 
     }, [cargarUsuarios]);
 
-    
-    // Insert - Agregar nuevo usuario
     const handleAgregar = async () => {
         if (guardando) return;
 
         try {
             setGuardando(true);
             const usuarioCreado = await controller.crearUsuario(nombre);
-            Alert.alert(
-                'Usuario Creado',
-                `"${usuarioCreado.nombre}" guardado con ID: ${usuarioCreado.id}`
-            );
+            Alert.alert('Usuario Creado', `"${usuarioCreado.nombre}" guardado con ID: ${usuarioCreado.id}`);
             setNombre('');
         } catch (error) {
             Alert.alert('Error', error.message);
@@ -75,9 +62,6 @@ export default function UsuarioView() {
         }
     };
 
-    
-    //  Renderizar cada usuario
-    
     const renderUsuario = ({ item, index }) => (
         <View style={styles.userItem}>
             <View style={styles.userNumber}>
@@ -99,36 +83,48 @@ export default function UsuarioView() {
         </View>
     );
 
-    // Render UI
     return (
         <View style={styles.container}>
-            
-            <Text style={styles.title}>Usuarios</Text>
 
-            {/* Input */}
-            <TextInput
-                style={styles.input}
-                placeholder="Escribe un nombre"
-                value={nombre}
-                onChangeText={setNombre}
-            />
+            {/* ======= TÍTULO PRINCIPAL ======= */}
+            <Text style={styles.mainTitle}>INSERT & SELECT</Text>
+            <Text style={styles.subTitle}>iOS (SQLite)</Text>
 
-            {/* Botón Agregar */}
-            <TouchableOpacity style={styles.addButton} onPress={handleAgregar}>
-                <Text style={styles.addButtonText}>
-                    {guardando ? 'Guardando...' : 'Agregar Usuario'}
-                </Text>
-            </TouchableOpacity>
+            {/* ======= TARJETA INSERTAR USUARIO ======= */}
+            <View style={styles.card}>
+                <Text style={styles.sectionTitle}>Insertar Usuario</Text>
 
-            {/* Cargando */}
+                <TextInput
+                    style={styles.input}
+                    placeholder="Escribe el nombre del usuario"
+                    value={nombre}
+                    onChangeText={setNombre}
+                />
+
+                <TouchableOpacity style={styles.addButton} onPress={handleAgregar}>
+                    <Text style={styles.addButtonText}>
+                        {guardando ? 'Guardando...' : 'Agregar Usuario'}
+                    </Text>
+                </TouchableOpacity>
+            </View>
+
+            {/* ======= LISTA DE USUARIOS ======= */}
+            <View style={styles.listHeader}>
+                <Text style={styles.sectionTitle}>Lista de Usuarios</Text>
+
+                <TouchableOpacity onPress={cargarUsuarios}>
+                    <Text style={styles.reloadText}>Recargar</Text>
+                </TouchableOpacity>
+            </View>
+
             {loading ? (
-                <ActivityIndicator size="large" color="#000" style={{ marginTop: 20 }} />
+                <ActivityIndicator size="large" color="#007AFF" style={{ marginTop: 20 }} />
             ) : (
                 <FlatList
                     data={usuarios}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={renderUsuario}
-                    style={{ marginTop: 20 }}
+                    style={{ marginTop: 10 }}
                 />
             )}
 
@@ -137,20 +133,43 @@ export default function UsuarioView() {
 }
 
 
-//      ESTILOS
+// =================== ESTILOS ===================
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
-        backgroundColor: '#fff'
+        paddingHorizontal: 20,
+        paddingTop: Platform.OS === 'ios' ? 80 : 50,  
+        backgroundColor: '#F5F6FA'
     },
 
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
+    mainTitle: {
+        fontSize: 28,
+        fontWeight: '800',
         textAlign: 'center',
+        marginBottom: 4
+    },
+
+    subTitle: {
+        fontSize: 14,
+        textAlign: 'center',
+        color: '#666',
         marginBottom: 20
+    },
+
+    /* Tarjeta */
+    card: {
+        backgroundColor: '#fff',
+        padding: 16,
+        borderRadius: 12,
+        elevation: 3,
+        marginBottom: 20
+    },
+
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: '700',
+        marginBottom: 10
     },
 
     input: {
@@ -174,11 +193,26 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
 
+    /* Lista */
+    listHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 10
+    },
+
+    reloadText: {
+        color: '#007AFF',
+        fontWeight: '600'
+    },
+
     userItem: {
         flexDirection: 'row',
+        backgroundColor: '#fff',
         padding: 12,
-        borderBottomWidth: 1,
-        borderColor: '#eee'
+        borderRadius: 10,
+        marginBottom: 10,
+        elevation: 2
     },
 
     userNumber: {
@@ -189,7 +223,8 @@ const styles = StyleSheet.create({
 
     userNumberText: {
         fontSize: 18,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        color: '#007AFF'
     },
 
     userInfo: {
