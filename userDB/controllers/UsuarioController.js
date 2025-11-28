@@ -6,12 +6,11 @@ export class UsuarioController {
         this.listeners = [];
     }
 
-    // Inicializar el controlador con el Service
     async initialize() {
         await DatabaseService.initialize();
     }
 
-    // Obtener usuarios desde la base de datos
+    //    OBTENER USUARIOS
     async obtenerUsuarios() {
         try {
             const data = await DatabaseService.getAll();
@@ -22,35 +21,35 @@ export class UsuarioController {
         }
     }
 
-    // Crear usuario nuevo
+    //     CREAR USUARIO
     async crearUsuario(nombre) {
-        try {
-            // 1. Validar datos
-            Usuario.validar(nombre);
+        Usuario.validar(nombre);
 
-            // 2. Insertar en BD
-            const nuevoUsuario = await DatabaseService.add(nombre.trim());
+        const nuevoUsuario = await DatabaseService.add(nombre.trim());
 
-            // 3. Notificar a los observadores
-            this.notifyListeners();
+        this.notifyListeners();
 
-            // 4. Retornar usuario creado
-            return new Usuario(
-                nuevoUsuario.id,
-                nuevoUsuario.nombre,
-                nuevoUsuario.fecha_creacion
-            );
-
-        } catch (error) {
-            console.error('Error al crear usuario:', error);
-            throw error;
-        }
+        return new Usuario(
+            nuevoUsuario.id,
+            nuevoUsuario.nombre,
+            nuevoUsuario.fecha_creacion
+        );
     }
 
-    // ================================
-    //   Sistema de Observadores (MVC)
-    // ================================
+    //     ACTUALIZAR
+    async actualizarUsuario(id, nuevoNombre) {
+        Usuario.validar(nuevoNombre);
+        await DatabaseService.update(id, nuevoNombre.trim());
+        this.notifyListeners();
+    }
 
+    //        ELIMINAR
+    async eliminarUsuario(id) {
+        await DatabaseService.delete(id);
+        this.notifyListeners();
+    }
+
+    //      OBSERVADORES
     addListener(callback) {
         this.listeners.push(callback);
     }

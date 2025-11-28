@@ -8,9 +8,11 @@ import {
     StyleSheet,
     Alert,
     ActivityIndicator,
-    Platform
+    Platform,
+    Modal
 } from 'react-native';
 
+import { Ionicons } from '@expo/vector-icons';
 import { UsuarioController } from '../controllers/UsuarioController';
 
 const controller = new UsuarioController();
@@ -22,6 +24,11 @@ export default function UsuarioView() {
     const [loading, setLoading] = useState(true);
     const [guardando, setGuardando] = useState(false);
 
+    const [modalVisible, setModalVisible] = useState(false);
+    const [editNombre, setEditNombre] = useState('');
+    const [editId, setEditId] = useState(null);
+
+    // CARGAR USUARIOS
     const cargarUsuarios = useCallback(async () => {
         try {
             setLoading(true);
@@ -47,13 +54,14 @@ export default function UsuarioView() {
 
     }, [cargarUsuarios]);
 
+    // AGREGAR
     const handleAgregar = async () => {
         if (guardando) return;
 
         try {
             setGuardando(true);
-            const usuarioCreado = await controller.crearUsuario(nombre);
-            Alert.alert('Usuario Creado', `"${usuarioCreado.nombre}" guardado con ID: ${usuarioCreado.id}`);
+            await controller.crearUsuario(nombre);
+            Alert.alert("Usuario Creado", "El usuario fue agregado correctamente.");
             setNombre('');
         } catch (error) {
             Alert.alert('Error', error.message);
@@ -62,8 +70,71 @@ export default function UsuarioView() {
         }
     };
 
+    // ABRIR MODAL
+    const abrirModal = (usuario) => {
+        setEditId(usuario.id);
+        setEditNombre(usuario.nombre);
+        setModalVisible(true);
+    };
+
+    // ACTUALIZAR
+    const handleActualizar = async () => {
+        try {
+            await controller.actualizarUsuario(editId, editNombre);
+            Alert.alert("Actualizado", "Usuario actualizado correctamente");
+            setModalVisible(false);
+        } catch (error) {
+            Alert.alert("Error", error.message);
+        }
+    };
+
+    // ELIMINAR
+    const handleEliminar = async () => {
+        // En WEB: usamos window.confirm porque Alert no soporta botones
+        if (Platform.OS === 'web') {
+            const confirmado = window.confirm('¿Deseas eliminar este usuario?');
+            if (!confirmado) return;
+
+            try {
+                await controller.eliminarUsuario(editId);
+                Alert.alert("Eliminado", "Usuario eliminado correctamente");
+                setModalVisible(false);
+            } catch (error) {
+                Alert.alert("Error", error.message);
+            }
+            return;
+        }
+
+        // En MÓVIL: usamos Alert con botones
+        Alert.alert(
+            "Confirmar Eliminación",
+            "¿Deseas eliminar este usuario?",
+            [
+                { text: "Cancelar", style: "cancel" },
+                {
+                    text: "Eliminar",
+                    style: "destructive",
+                    onPress: async () => {
+                        try {
+                            await controller.eliminarUsuario(editId);
+                            Alert.alert("Eliminado", "Usuario eliminado correctamente");
+                            setModalVisible(false);
+                        } catch (error) {
+                            Alert.alert("Error", error.message);
+                        }
+                    }
+                }
+            ]
+        );
+    };
+
+    // RENDER ITEM
     const renderUsuario = ({ item, index }) => (
-        <View style={styles.userItem}>
+        <TouchableOpacity
+            onPress={() => abrirModal(item)}
+            style={styles.userItem}
+        >
+            {/* Número de orden (1,2,3...) */}
             <View style={styles.userNumber}>
                 <Text style={styles.userNumberText}>{index + 1}</Text>
             </View>
@@ -71,26 +142,19 @@ export default function UsuarioView() {
             <View style={styles.userInfo}>
                 <Text style={styles.userName}>{item.nombre}</Text>
                 <Text style={styles.userId}>ID: {item.id}</Text>
-
-                <Text style={styles.userDate}>
-                    {new Date(item.fechaCreacion).toLocaleDateString('es-MX', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    })}
-                </Text>
             </View>
-        </View>
+
+            <Ionicons name="create-outline" size={22} color="#007AFF" />
+        </TouchableOpacity>
     );
 
     return (
         <View style={styles.container}>
 
-            {/* ======= TÍTULO PRINCIPAL ======= */}
-            <Text style={styles.mainTitle}>INSERT & SELECT</Text>
-            <Text style={styles.subTitle}>iOS (SQLite)</Text>
+            <Text style={styles.mainTitle}>CRUD DE USUARIOS</Text>
+            <Text style={styles.subTitle}>SQLite (iOS/Android) y LocalStorage (Web)</Text>
 
-            {/* ======= TARJETA INSERTAR USUARIO ======= */}
+            {/* FORM AGREGAR */}
             <View style={styles.card}>
                 <Text style={styles.sectionTitle}>Insertar Usuario</Text>
 
@@ -108,61 +172,87 @@ export default function UsuarioView() {
                 </TouchableOpacity>
             </View>
 
-            {/* ======= LISTA DE USUARIOS ======= */}
+            {/* LISTA */}
             <View style={styles.listHeader}>
                 <Text style={styles.sectionTitle}>Lista de Usuarios</Text>
-
                 <TouchableOpacity onPress={cargarUsuarios}>
                     <Text style={styles.reloadText}>Recargar</Text>
                 </TouchableOpacity>
             </View>
 
             {loading ? (
-                <ActivityIndicator size="large" color="#007AFF" style={{ marginTop: 20 }} />
+                <ActivityIndicator size="large" color="#007AFF" />
             ) : (
                 <FlatList
                     data={usuarios}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={renderUsuario}
-                    style={{ marginTop: 10 }}
                 />
             )}
+
+            {/* =============== MODAL =============== */}
+            <Modal visible={modalVisible} transparent animationType="slide">
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalBox}>
+                        
+                        <Text style={styles.modalTitle}>Editar Usuario</Text>
+
+                        <TextInput
+                            style={styles.input}
+                            value={editNombre}
+                            onChangeText={setEditNombre}
+                        />
+
+                        {/* BOTÓN GUARDAR */}
+                        <TouchableOpacity style={styles.addButton} onPress={handleActualizar}>
+                            <Text style={styles.addButtonText}>Guardar Cambios</Text>
+                        </TouchableOpacity>
+
+                        {/* BOTÓN ELIMINAR */}
+                        <TouchableOpacity style={styles.deleteButton} onPress={handleEliminar}>
+                            <Text style={styles.deleteText}>Eliminar Usuario</Text>
+                        </TouchableOpacity>
+
+                        {/* CANCELAR */}
+                        <TouchableOpacity onPress={() => setModalVisible(false)}>
+                            <Text style={styles.cancelText}>Cancelar</Text>
+                        </TouchableOpacity>
+
+                    </View>
+                </View>
+            </Modal>
 
         </View>
     );
 }
 
 
-// =================== ESTILOS ===================
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 20,
-        paddingTop: Platform.OS === 'ios' ? 80 : 50,  
+        paddingTop: Platform.OS === 'ios' ? 80 : 50,
         backgroundColor: '#F5F6FA'
     },
 
     mainTitle: {
-        fontSize: 28,
+        fontSize: 26,
         fontWeight: '800',
         textAlign: 'center',
         marginBottom: 4
     },
 
     subTitle: {
-        fontSize: 14,
+        fontSize: 13,
         textAlign: 'center',
         color: '#666',
         marginBottom: 20
     },
 
-    /* Tarjeta */
     card: {
         backgroundColor: '#fff',
         padding: 16,
         borderRadius: 12,
-        elevation: 3,
         marginBottom: 20
     },
 
@@ -193,11 +283,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
 
-    /* Lista */
     listHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
         marginBottom: 10
     },
 
@@ -212,13 +300,12 @@ const styles = StyleSheet.create({
         padding: 12,
         borderRadius: 10,
         marginBottom: 10,
-        elevation: 2
+        alignItems: 'center'
     },
 
     userNumber: {
         width: 40,
-        alignItems: 'center',
-        justifyContent: 'center'
+        alignItems: 'center'
     },
 
     userNumberText: {
@@ -240,9 +327,44 @@ const styles = StyleSheet.create({
         color: '#555'
     },
 
-    userDate: {
-        color: '#888',
-        marginTop: 4,
-        fontStyle: 'italic'
+    /* MODAL */
+    modalContainer: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.4)',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+
+    modalBox: {
+        backgroundColor: '#fff',
+        padding: 20,
+        width: '85%',
+        borderRadius: 12
+    },
+
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: '700',
+        marginBottom: 10
+    },
+
+    deleteButton: {
+        marginTop: 10,
+        padding: 10,
+        borderRadius: 8,
+        backgroundColor: '#FF3B30',
+        alignItems: 'center'
+    },
+
+    deleteText: {
+        color: '#fff',
+        fontWeight: 'bold'
+    },
+
+    cancelText: {
+        marginTop: 15,
+        textAlign: 'center',
+        color: '#007AFF',
+        fontWeight: '600'
     }
 });
